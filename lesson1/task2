@@ -1,0 +1,18 @@
+---
+- name: Deinstall web server
+  hosts: nodes
+  tasks:
+  - name: Deinstall package
+    yum:
+      name: httpd
+      state: removed
+  - name: Remove index.html
+    file:
+      path: /var/www/html/index.html
+      state: absent
+  - name: Open firewall ports
+    firewalld:
+      service: http
+      permanent: yes
+      immediate: true
+      state: disabled
