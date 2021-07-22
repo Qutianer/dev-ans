@@ -1,0 +1,10 @@
+---
+- name: Reconfigure GRUB
+  hosts: nodes
+  tasks:
+  - name: Add kernel command line options
+    lineinfile:
+      path: /etc/default/grub
+      line: GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX net.ifnames=0 biosdevname=0"
+  - name: Generate new GRUB config
+    shell: grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg 
