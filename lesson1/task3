@@ -2,6 +2,11 @@
 - name: Reconfigure GRUB
   hosts: nodes
   tasks:
+  - name: Ensure file exists
+    copy:
+      dest: /etc/default/grub
+      content: ''
+      force: no
   - name: Add kernel command line options
     lineinfile:
       path: /etc/default/grub
