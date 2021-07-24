@@ -11,8 +11,9 @@
   - name: Create user
     user:
       name: "{{ item }}"
-      password: "{{ pass[item] | password_hash('sha512',item) }}"
+      password: "{{ pass[item] | password_hash('sha512') }}"
       home: "{{ homedir }}{{ item }}"
       comment: "{{ item }}{{ mail }}"
+      update_password: on_create
     with_items: "{{ users }}"
       
