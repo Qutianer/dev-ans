@@ -1,0 +1,11 @@
+---
+- name: Delete users
+  hosts: nodes
+  vars:
+    users: [alice, bob, carol]
+  tasks:
+  - name: Delete
+    user:
+      name: "{{ item }}"
+      state: absent
+    with_items: "{{ users }}"

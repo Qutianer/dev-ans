@@ -1,0 +1,22 @@
+---
+- name: Create users
+  hosts: nodes
+  vars_files:
+    - pass
+  vars:
+    homedir: "/home/"
+    mail: "@example.com"
+    users: [alice, bob, carol]
+  tasks:
+  - name: message
+    debug:
+      msg: "{{ item  }}, mail: {{ item }}{{ mail }}, homedir: {{ homedir }}{{ item }}, pass: {{ pass[item] }}"
+    with_items: "{{ users }}"
+  - name: Create user
+    user:
+      name: "{{ item }}"
+      password: "{{ pass[item] }}"
+      home: "{{ homedir }}{{ item }}"
+      comment: "{{ item }}{{ mail }}"
+    with_items: "{{ users }}"
+      
