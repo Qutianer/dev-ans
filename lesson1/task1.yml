@@ -1,16 +1,19 @@
 ---
 - name: Install web server
-  hosts: nodes 
+  hosts: nodes
+  vars:
+    services: [httpd, firewalld]
   tasks:
-  - name: Install package
+  - name: Install packages
     yum:
-      name: httpd
+      name: "{{ services }}"
       state: latest
-  - name: Start and enable service
+  - name: Start and enable services
     service:
-     name: httpd
-     state: started
-     enabled: true
+      name: "{{ item }}"
+      state: started
+      enabled: true
+    with_items: "{{ services }} "
   - name: Create index.html
     copy:
       dest: /var/www/html/index.html
