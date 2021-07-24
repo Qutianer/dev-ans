@@ -1,0 +1,13 @@
+---
+- name: Create users
+  hosts: nodes
+  vars:
+    users: [alice, bob, carol]
+  tasks:
+  - name: Create user
+    user:
+      name: "{{ item }}"
+      state: absent
+      force: yes
+    with_items: "{{ users }}"
+      
