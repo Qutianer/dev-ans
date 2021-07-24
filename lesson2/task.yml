@@ -8,10 +8,6 @@
     mail: "@example.com"
     users: [alice, bob, carol]
   tasks:
-  - name: message
-    debug:
-      msg: "{{ item  }}, mail: {{ item }}{{ mail }}, homedir: {{ homedir }}{{ item }}, pass: {{ pass[item] }}"
-    with_items: "{{ users }}"
   - name: Create user
     user:
       name: "{{ item }}"
