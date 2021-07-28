@@ -1,0 +1,13 @@
+<html>
+<head><title>{{ website_title }}</title></head>
+<body>
+Welcome to my website.<br>
+Last server compliance checked: {{ ansible_date_time.date }} {{ ansible_date_time.time }} ( {{ ansible_date_time.tz }} {{ ansible_date_time.tz_offset }})<br>
+Running on: {{ ansible_distribution }} (ver. {{ ansible_distribution_version }}) on kernel: {{ ansible_kernel }}<br>
+IP addresses:<br><ul>
+{% for ip_addr in ansible_all_ipv4_addresses %}
+<li> {{ ip_addr }}</li>
+{% endfor %}
+</ul>
+</body>
+</html>

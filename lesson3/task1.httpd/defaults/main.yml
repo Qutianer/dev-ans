@@ -1,0 +1,9 @@
+---
+packages: [ httpd, firewalld ]
+services: [ httpd, firewalld ]
+firewalld_services: [ http ]
+website_title: "Default title"
+withssl: false
+ssl_cert_path: /etc/pki/tls/certs/localhost.crt
+ssl_key_path: /etc/pki/tls/private/localhost.key
+ssl_csr_path: /etc/pki/tls/certs/localhost.csr

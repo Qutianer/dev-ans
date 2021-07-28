@@ -1,0 +1,9 @@
+---
+- name: Install web-app on nodes
+  hosts: [nodes]
+  tasks:
+  - name: Main role
+    include_role:
+      name: task1.httpd
+    vars:
+      withssl: true

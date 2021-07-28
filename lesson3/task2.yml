@@ -1,0 +1,7 @@
+---
+- name: Install tftp server on nodes
+  hosts: [nodes]
+  tasks:
+  - name: Include main role
+    include_role:
+      name: task2.tftp
