@@ -1,0 +1,65 @@
+---
+
+- name: Install packages for ssl
+  yum:
+    name: mod_ssl, python3-cryptography
+    state: latest
+  notify: "reload httpd"
+
+- name: Get file status
+  stat:
+    path: "{{ ssl_cert_path }}"
+  register: certfile
+
+- name: Check certificate
+  openssl_certificate_info:
+    path: "{{ ssl_cert_path }}"
+  register: ssl_check
+  ignore_errors: yes
+  when: certfile.stat.exists
+
+#- debug:
+#    var:
+#      ssl_check
+
+- name: Create/renew certificate
+  block:
+
+  - name: Generate ssl key
+    openssl_privatekey:
+      path: "{{ ssl_key_path }}"
+
+  - name: Generate csr
+    openssl_csr:
+      path: "{{ ssl_csr_path }}"
+      privatekey_path: "{{ ssl_key_path }}"
+      common_name: node1.example.com
+
+  - name: Generate certificate
+    openssl_certificate:
+      path: "{{ ssl_cert_path }}"
+      privatekey_path: "{{ ssl_key_path }}"
+      csr_path: "{{ ssl_csr_path }}"
+      provider: selfsigned
+    notify: "reload httpd"
+
+  - name: Get cert file status
+    stat:
+      path: "{{ ssl_cert_path }}"
+    register: certfile
+
+  - name: Fail if file not exist
+    fail:
+    when: certfile.stat.exists == false
+
+  - name: ReCheck certificate
+    openssl_certificate_info:
+      path: "{{ ssl_cert_path }}"
+  when: ( ssl_check.failed is defined and ssl_check.failed ) or ( ssl_check.skipped is defined and ssl_check.skipped )
+
+- name: Open firewall ports
+  firewalld:
+    service: https
+    permanent: yes
+    immediate: true
+    state: enabled

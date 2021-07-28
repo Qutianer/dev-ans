@@ -1,0 +1,12 @@
+---
+
+- name: Install web server
+  include_tasks: httpd.yml
+
+- name: Setting some content
+  include_tasks: webcontent.yml
+
+- name: Add ssl support
+  include_tasks: ssl.yml
+  when: withssl
+

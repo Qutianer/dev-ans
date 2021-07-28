@@ -1,0 +1,39 @@
+---
+- name: Install ftpd
+  yum:
+    name: vsftpd, firewalld, python3-libsemanage
+    state: latest
+
+- name: Start and enable services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  with_items: [vsftpd, firewalld]
+
+- name: Open ftp ports
+  firewalld:
+    service: ftp
+    permanent: yes
+    immediate: true
+    state: enabled
+
+- name: Create upload directory
+  file:
+    path: "{{ anon_upload_dir }}"
+    state: directory
+    setype: public_content_rw_t
+    mode: '0777'
+
+- name: Enabling anon write
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+
+- name: Configure ftpd through template
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+  notify: "restart vsftpd"
+
