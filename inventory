@@ -1,3 +1,6 @@
 [nodes]
 node1.example.com
+node2.example.com
 
+[test]
+node1.example.com
