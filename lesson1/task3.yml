@@ -1,15 +1,36 @@
 ---
 - name: Reconfigure GRUB
   hosts: nodes
+  vars:
+    file: /etc/default/grub
+    param: GRUB_CMDLINE_LINUX=
+    regs:
+      - key: "net.ifnames"
+        value: 0
+      - key: "biosdevname"
+        value: 0
   tasks:
   - name: Ensure file exists
     copy:
       dest: /etc/default/grub
       content: ''
       force: no
-  - name: Add kernel command line options
+
+  - name: Remove wrong param
     lineinfile:
-      path: /etc/default/grub
-      line: GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX net.ifnames=0 biosdevname=0"
+      path: "{{file}}"
+      regexp: '^({{param}}.*?)(?:\b{{ item.key }}=(?!{{item.value}}\b))[\S]* ?(.*)"'
+      line: '\1\2"'
+      backrefs: yes
+    with_items: "{{ regs }}"
+
+  - name: Add right param if missing
+    lineinfile:
+      path: "{{file}}"
+      regexp: '^({{param}}(?!.*\b{{ item.key }}={{item.value}}\b))(.*)"'
+      line: '\1\2 {{item.key}}={{item.value}}"'
+      backrefs: yes
+    with_items: "{{ regs }}"
+
   - name: Generate new GRUB config
     shell: grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg 
